@@ -12,6 +12,11 @@ public class FraudRule {
     private String ruleName;
     private String ruleExpression;
     private String description;
+    
+    // Logic fields for FraudDetectionServiceImpl
+    private String conditionField;
+    private String operator;
+    private String value;
     private boolean active;
 
     // Getters and Setters
@@ -26,6 +31,15 @@ public class FraudRule {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public String getConditionField() { return conditionField; }
+    public void setConditionField(String conditionField) { this.conditionField = conditionField; }
+
+    public String getOperator() { return operator; }
+    public void setOperator(String operator) { this.operator = operator; }
+
+    public String getValue() { return value; }
+    public void setValue(String value) { this.value = value; }
 
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
