@@ -13,7 +13,7 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
-    private String role = "USER";
+    private String role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Policy> policies;
@@ -23,9 +23,10 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.role = (role == null || role.isEmpty()) ? "USER" : role;
+        this.role = (role == null) ? "USER" : role;
     }
 
+    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
@@ -36,6 +37,4 @@ public class User {
     public void setPassword(String password) { this.password = password; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
-    public List<Policy> getPolicies() { return policies; }
-    public void setPolicies(List<Policy> policies) { this.policies = policies; }
 }

@@ -10,21 +10,20 @@ public class Policy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @Column(name = "policy_number", unique = true)
+    private String policyNumber;
+    private String policyType;
+    private Double coverageAmount;
+    private Double premium;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(unique = true, name = "policy_number")
-    private String policyNumber;
-    
-    @Column(name = "policy_type")
-    private String policyType;
-
-    private LocalDate startDate;
-    private LocalDate endDate;
-
-    @OneToMany(mappedBy = "policy", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "policy")
     private List<Claim> claims;
 
     public Policy() {}
@@ -36,18 +35,13 @@ public class Policy {
         this.endDate = endDate;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-    public String getPolicyNumber() { return policyNumber; }
-    public void setPolicyNumber(String policyNumber) { this.policyNumber = policyNumber; }
-    public String getPolicyType() { return policyType; }
-    public void setPolicyType(String policyType) { this.policyType = policyType; }
-    public LocalDate getStartDate() { return startDate; }
+    // Getters and Setters (Fixes Compilation Errors)
+    public void setCoverageAmount(Double coverageAmount) { this.coverageAmount = coverageAmount; }
+    public void setPremium(Double premium) { this.premium = premium; }
     public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
-    public LocalDate getEndDate() { return endDate; }
     public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
-    public List<Claim> getClaims() { return claims; }
-    public void setClaims(List<Claim> claims) { this.claims = claims; }
+    public String getPolicyNumber() { return policyNumber; }
+    public LocalDate getStartDate() { return startDate; }
+    public LocalDate getEndDate() { return endDate; }
+    public User getUser() { return user; }
 }

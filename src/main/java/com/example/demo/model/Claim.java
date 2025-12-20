@@ -2,7 +2,6 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -11,29 +10,21 @@ public class Claim {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Double claimAmount;
+    private LocalDate claimDate;
+    private String incidentDate; // Added for ClaimServiceImpl
+    private String description;
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "policy_id")
     private Policy policy;
 
-    @Column(name = "claim_date")
-    private LocalDate claimDate;
-
-    @Column(name = "claim_amount")
-    private Double claimAmount;
-
-    private String description;
-    private String status = "PENDING";
-
     @ManyToMany
-    @JoinTable(
-        name = "claim_fraud_rules",
-        joinColumns = @JoinColumn(name = "claim_id"),
-        inverseJoinColumns = @JoinColumn(name = "rule_id")
-    )
-    private Set<FraudRule> suspectedRules = new HashSet<>();
+    @JoinTable(name = "claim_suspected_rules")
+    private Set<FraudRule> suspectedRules;
 
-    @OneToOne(mappedBy = "claim", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "claim")
     private FraudCheckResult fraudCheckResult;
 
     public Claim() {}
@@ -44,20 +35,11 @@ public class Claim {
         this.description = description;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public Policy getPolicy() { return policy; }
-    public void setPolicy(Policy policy) { this.policy = policy; }
-    public LocalDate getClaimDate() { return claimDate; }
-    public void setClaimDate(LocalDate claimDate) { this.claimDate = claimDate; }
-    public Double getClaimAmount() { return claimAmount; }
+    // Setters to fix Errors
+    public void setIncidentDate(String incidentDate) { this.incidentDate = incidentDate; }
     public void setClaimAmount(Double claimAmount) { this.claimAmount = claimAmount; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
-    public Set<FraudRule> getSuspectedRules() { return suspectedRules; }
-    public void setSuspectedRules(Set<FraudRule> suspectedRules) { this.suspectedRules = suspectedRules; }
-    public FraudCheckResult getFraudCheckResult() { return fraudCheckResult; }
-    public void setFraudCheckResult(FraudCheckResult fraudCheckResult) { this.fraudCheckResult = fraudCheckResult; }
+    public void setPolicy(Policy policy) { this.policy = policy; }
+    public Double getClaimAmount() { return claimAmount; }
+    public LocalDate getClaimDate() { return claimDate; }
 }
