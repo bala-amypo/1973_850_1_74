@@ -21,7 +21,6 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
 
-    // Constructor injection for all security components
     public AuthController(UserService userService, 
                           AuthenticationManager authenticationManager, 
                           JwtUtil jwtUtil, 
@@ -34,7 +33,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody AuthRequest request) {
-        User user = new User(request.getName(), request.getEmail(), request.getPassword(), "USER");
+        // Updated to use "ROLE_USER" to follow Spring Security standards
+        User user = new User(request.getName(), request.getEmail(), request.getPassword(), "ROLE_USER");
         return ResponseEntity.ok(userService.registerUser(user));
     }
 
@@ -45,14 +45,15 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
-        // 2. Load user details
+        // 2. Load user and user details
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         User user = userService.findByEmail(request.getEmail());
 
         // 3. Generate the token
         final String token = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getRole());
 
-        // 4. Return the DTO response
-        return ResponseEntity.ok(new AuthResponse(token, user.getEmail(), user.getRole()));
+        // 4. Return the DTO response - NOW FIXING THE 4-ARGUMENT CONSTRUCTOR ERROR
+        // Arguments: token, id, email, role
+        return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getEmail(), user.getRole()));
     }
 }
