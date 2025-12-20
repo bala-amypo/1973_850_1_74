@@ -9,6 +9,6 @@ public interface PolicyService {
     List<Policy> getAllPolicies();
     Policy getPolicyById(Long id);
     
-    // ADD THIS LINE TO FIX THE COMPILATION ERROR
+    // FIX: Method signature added so Controller can call it
     List<Policy> getPoliciesByUserId(Long userId);
 }

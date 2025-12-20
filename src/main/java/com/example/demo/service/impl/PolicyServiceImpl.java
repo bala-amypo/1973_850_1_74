@@ -27,7 +27,6 @@ public class PolicyServiceImpl implements PolicyService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Verified by the new method in PolicyRepository
         if (policyRepository.existsByPolicyNumber(dto.getPolicyNumber())) {
             throw new IllegalArgumentException("policy number already exists");
         }
@@ -36,12 +35,9 @@ public class PolicyServiceImpl implements PolicyService {
         policy.setUser(user);
         policy.setPolicyNumber(dto.getPolicyNumber());
         policy.setPolicyType(dto.getPolicyType());
-        
-        // Parsing String to LocalDate as required by Model
         policy.setStartDate(LocalDate.parse(dto.getStartDate()));
         policy.setEndDate(LocalDate.parse(dto.getEndDate()));
 
-        // Business Rule: End date must be after start date
         if (!policy.getEndDate().isAfter(policy.getStartDate())) {
             throw new IllegalArgumentException("invalid dates");
         }
@@ -58,5 +54,11 @@ public class PolicyServiceImpl implements PolicyService {
     public Policy getPolicyById(Long id) {
         return policyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Policy not found"));
+    }
+
+    // FIX: Full implementation of the method requested by Controller
+    @Override
+    public List<Policy> getPoliciesByUserId(Long userId) {
+        return policyRepository.findByUserId(userId);
     }
 }
