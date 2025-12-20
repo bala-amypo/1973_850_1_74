@@ -1,12 +1,12 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.dto.PolicyDto;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Policy;
 import com.example.demo.model.User;
 import com.example.demo.repository.PolicyRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.PolicyService;
-import com.example.demo.dto.PolicyDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +24,10 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Override
     public Policy createPolicy(Long userId, PolicyDto dto) {
-        // Rule: If user is not found, throw ResourceNotFoundException
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Rule: policyNumber must be unique
+        // Using the getter we just added to PolicyDto
         if (policyRepository.existsByPolicyNumber(dto.getPolicyNumber())) {
             throw new IllegalArgumentException("policy number already exists");
         }
@@ -37,16 +36,14 @@ public class PolicyServiceImpl implements PolicyService {
         policy.setUser(user);
         policy.setPolicyNumber(dto.getPolicyNumber());
         policy.setPolicyType(dto.getPolicyType());
+        policy.setCoverageAmount(dto.getCoverageAmount());
+        policy.setPremium(dto.getPremium());
 
-        // FIX: Parse String from DTO to LocalDate for Model
-        try {
-            policy.setStartDate(LocalDate.parse(dto.getStartDate()));
-            policy.setEndDate(LocalDate.parse(dto.getEndDate()));
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid date format. Use YYYY-MM-DD");
-        }
+        // FIX: Explicitly parsing String to LocalDate
+        policy.setStartDate(LocalDate.parse(dto.getStartDate()));
+        policy.setEndDate(LocalDate.parse(dto.getEndDate()));
 
-        // Rule: endDate must be strictly after startDate
+        // Logic check: endDate must be after startDate
         if (!policy.getEndDate().isAfter(policy.getStartDate())) {
             throw new IllegalArgumentException("invalid dates");
         }
@@ -63,5 +60,11 @@ public class PolicyServiceImpl implements PolicyService {
     public Policy getPolicyById(Long id) {
         return policyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Policy not found"));
+    }
+
+    // FIX: Implementing the missing method from PolicyService interface
+    @Override
+    public List<Policy> getPoliciesByUserId(Long userId) {
+        return policyRepository.findByUserId(userId);
     }
 }
