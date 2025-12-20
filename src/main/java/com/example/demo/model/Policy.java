@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -11,24 +12,30 @@ public class Policy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "policy_number", unique = true)
-    private String policyNumber;
-    private String policyType;
-    private Double coverageAmount; // Added to fix error
-    private Double premium;        // Added to fix error
-    private LocalDate startDate;
-    private LocalDate endDate;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "policy")
-    private List<Claim> claims;
+    @Column(unique = true, name = "policy_number")
+    private String policyNumber;
+    private String policyType;
+    private Double coverageAmount;
+    private Double premium;
+    private LocalDate startDate;
+    private LocalDate endDate;
+
+    @OneToMany(mappedBy = "policy", cascade = CascadeType.ALL)
+    private List<Claim> claims = new ArrayList<>();
 
     public Policy() {}
+    public Policy(User user, String policyNumber, String policyType, LocalDate startDate, LocalDate endDate) {
+        this.user = user;
+        this.policyNumber = policyNumber;
+        this.policyType = policyType;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public User getUser() { return user; }
@@ -45,4 +52,6 @@ public class Policy {
     public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
     public LocalDate getEndDate() { return endDate; }
     public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
+    public List<Claim> getClaims() { return claims; }
+    public void setClaims(List<Claim> claims) { this.claims = claims; }
 }
