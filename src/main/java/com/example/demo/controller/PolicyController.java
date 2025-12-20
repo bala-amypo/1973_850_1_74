@@ -19,12 +19,14 @@ public class PolicyController {
 
     @PostMapping("/{userId}")
     public ResponseEntity<Policy> createPolicy(@PathVariable Long userId, @RequestBody PolicyDto policyDto) {
+        // This line caused "incompatible types" if service expected a Model instead of a DTO
         Policy policy = policyService.createPolicy(userId, policyDto);
         return ResponseEntity.ok(policy);
     }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Policy>> getPoliciesByUser(@PathVariable Long userId) {
+        // This line caused "cannot find symbol" because of a name mismatch
         return ResponseEntity.ok(policyService.getPoliciesByUserId(userId));
     }
 }

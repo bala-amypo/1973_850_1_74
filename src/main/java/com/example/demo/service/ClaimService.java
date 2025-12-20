@@ -1,10 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Claim;
-import java.util.List;
+import com.example.demo.dto.ClaimDto;
 
 public interface ClaimService {
-    Claim createClaim(Long policyId, Claim claim); // [cite: 423]
-    Claim getClaim(Long claimId); // [cite: 424]
-    List<Claim> getAllClaims(); // [cite: 425]
+    // This fixes the "incompatible types" error by accepting ClaimDto
+    Claim createClaim(Long policyId, ClaimDto claimDto);
 }
