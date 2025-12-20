@@ -27,7 +27,7 @@ public class PolicyServiceImpl implements PolicyService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Using the getter we just added to PolicyDto
+        // Verified by the new method in PolicyRepository
         if (policyRepository.existsByPolicyNumber(dto.getPolicyNumber())) {
             throw new IllegalArgumentException("policy number already exists");
         }
@@ -36,14 +36,12 @@ public class PolicyServiceImpl implements PolicyService {
         policy.setUser(user);
         policy.setPolicyNumber(dto.getPolicyNumber());
         policy.setPolicyType(dto.getPolicyType());
-        policy.setCoverageAmount(dto.getCoverageAmount());
-        policy.setPremium(dto.getPremium());
-
-        // FIX: Explicitly parsing String to LocalDate
+        
+        // Parsing String to LocalDate as required by Model
         policy.setStartDate(LocalDate.parse(dto.getStartDate()));
         policy.setEndDate(LocalDate.parse(dto.getEndDate()));
 
-        // Logic check: endDate must be after startDate
+        // Business Rule: End date must be after start date
         if (!policy.getEndDate().isAfter(policy.getStartDate())) {
             throw new IllegalArgumentException("invalid dates");
         }
@@ -60,11 +58,5 @@ public class PolicyServiceImpl implements PolicyService {
     public Policy getPolicyById(Long id) {
         return policyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Policy not found"));
-    }
-
-    // FIX: Implementing the missing method from PolicyService interface
-    @Override
-    public List<Policy> getPoliciesByUserId(Long userId) {
-        return policyRepository.findByUserId(userId);
     }
 }
