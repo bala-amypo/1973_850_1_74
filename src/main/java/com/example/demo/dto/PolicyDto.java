@@ -1,26 +1,25 @@
 package com.example.demo.dto;
 
-import java.time.LocalDate;
-
 public class PolicyDto {
-    private Long id; // [cite: 315]
-    private Long userId; // [cite: 316]
-    private String policyNumber; // [cite: 317]
-    private String policyType; // [cite: 318]
-    private LocalDate startDate; // [cite: 319]
-    private LocalDate endDate; // [cite: 320]
+    private String policyType;
+    private double coverageAmount;
+    private double premium;
+    private String startDate;
+    private String endDate;
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-    public String getPolicyNumber() { return policyNumber; }
-    public void setPolicyNumber(String policyNumber) { this.policyNumber = policyNumber; }
     public String getPolicyType() { return policyType; }
     public void setPolicyType(String policyType) { this.policyType = policyType; }
-    public LocalDate getStartDate() { return startDate; }
-    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
-    public LocalDate getEndDate() { return endDate; }
-    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
+
+    public double getCoverageAmount() { return coverageAmount; }
+    public void setCoverageAmount(double coverageAmount) { this.coverageAmount = coverageAmount; }
+
+    public double getPremium() { return premium; }
+    public void setPremium(double premium) { this.premium = premium; }
+
+    public String getStartDate() { return startDate; }
+    public void setStartDate(String startDate) { this.startDate = startDate; }
+
+    public String getEndDate() { return endDate; }
+    public void setEndDate(String endDate) { this.endDate = endDate; }
 }
