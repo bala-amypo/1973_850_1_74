@@ -1,32 +1,31 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "users") // Required table name [cite: 25]
+@Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Required primary key [cite: 27]
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
-    @Column(unique = true) // Email must be unique [cite: 29]
+    @Column(unique = true)
     private String email;
+    private String password;
+    private String role = "USER";
 
-    private String password; // Stored as hashed value [cite: 30]
-    private String role; // "USER" or "ADMIN" [cite: 31]
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Policy> policies;
 
-    public User() {} // Required no-arg constructor [cite: 33]
-
-    public User(String name, String email, String password, String role) { // [cite: 34]
+    public User() {}
+    public User(String name, String email, String password, String role) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.role = (role == null || role.isEmpty()) ? "USER" : role;
     }
 
-    // Getters and Setters [cite: 219]
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
@@ -37,4 +36,6 @@ public class User {
     public void setPassword(String password) { this.password = password; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+    public List<Policy> getPolicies() { return policies; }
+    public void setPolicies(List<Policy> policies) { this.policies = policies; }
 }
