@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PolicyRepository extends JpaRepository<Policy, Long> {
-    Optional<Policy> findByPolicyNumber(String policyNumber); // [cite: 179]
-    boolean existsByPolicyNumber(String policyNumber); // [cite: 180]
-    List<Policy> findByUserId(Long userId); // [cite: 181]
+    // This uses the 'id' field which ALREADY exists in your Policy model
+    Optional<Policy> findById(Long id);
+    
+    // This allows you to get all policies for a specific user
+    List<Policy> findByUserId(Long userId);
 }
