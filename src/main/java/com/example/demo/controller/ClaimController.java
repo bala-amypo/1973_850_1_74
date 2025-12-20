@@ -1,3 +1,14 @@
+package com.example.demo.controller;
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/claims") // or /api/policies, etc.
+public class ClaimController { 
+    // ... rest of your code
+}
 @RestController
 @RequestMapping("/api/claims")
 public class ClaimController {
