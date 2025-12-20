@@ -1,17 +1,16 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.Claim;
+import com.example.demo.dto.ClaimDto;
+import com.example.demo.service.ClaimService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/claims") // or /api/policies, etc.
-public class ClaimController { 
-    // ... rest of your code
-}
-@RestController
 @RequestMapping("/api/claims")
 public class ClaimController {
+
     private final ClaimService claimService;
 
     public ClaimController(ClaimService claimService) {
@@ -19,13 +18,8 @@ public class ClaimController {
     }
 
     @PostMapping("/{policyId}")
-    public ResponseEntity<Claim> createClaim(@PathVariable Long policyId, @RequestBody ClaimDto dto) {
-        // Convert DTO to Model
-        Claim claim = new Claim();
-        claim.setClaimDate(dto.getClaimDate());
-        claim.setClaimAmount(dto.getClaimAmount());
-        claim.setDescription(dto.getDescription());
-        
-        return ResponseEntity.ok(claimService.createClaim(policyId, claim));
+    public ResponseEntity<Claim> createClaim(@PathVariable Long policyId, @RequestBody ClaimDto claimDto) {
+        Claim claim = claimService.createClaim(policyId, claimDto);
+        return ResponseEntity.ok(claim);
     }
 }

@@ -1,14 +1,16 @@
 package com.example.demo.controller;
 
-// ADD THESE THREE LINES HERE
+import com.example.demo.model.FraudRule;
+import com.example.demo.dto.FraudRuleDto;
+import com.example.demo.service.FraudRuleService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 
-
 @RestController
-@RequestMapping("/api/rules")
+@RequestMapping("/api/fraud-rules")
 public class FraudRuleController {
+
     private final FraudRuleService fraudRuleService;
 
     public FraudRuleController(FraudRuleService fraudRuleService) {
@@ -16,15 +18,8 @@ public class FraudRuleController {
     }
 
     @PostMapping
-    public ResponseEntity<FraudRule> addRule(@RequestBody FraudRuleDto dto) {
-        // Convert DTO to Model
-        FraudRule rule = new FraudRule();
-        rule.setRuleName(dto.getRuleName());
-        rule.setConditionField(dto.getConditionField());
-        rule.setOperator(dto.getOperator());
-        rule.setValue(dto.getValue());
-        rule.setSeverity(dto.getSeverity());
-        
-        return ResponseEntity.ok(fraudRuleService.addRule(rule));
+    public ResponseEntity<FraudRule> addRule(@RequestBody FraudRuleDto ruleDto) {
+        FraudRule rule = fraudRuleService.createRule(ruleDto);
+        return ResponseEntity.ok(rule);
     }
 }
