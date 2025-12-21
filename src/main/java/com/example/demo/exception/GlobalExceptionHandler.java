@@ -28,4 +28,3 @@ public class GlobalExceptionHandler {
 
 
 
-kill -9 $(lsof -t -i:9001)
