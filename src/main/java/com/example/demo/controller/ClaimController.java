@@ -35,3 +35,15 @@ public class ClaimController {
         return ResponseEntity.ok(claimService.getAllClaims());
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
