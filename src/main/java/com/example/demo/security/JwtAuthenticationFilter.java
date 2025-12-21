@@ -25,9 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
-    // ⭐ VERY IMPORTANT
-    // This method tells Spring Security:
-    // "DO NOT apply JWT filter for register, login, swagger"
+    // ⭐ Skip JWT check for register, login, and Swagger
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
