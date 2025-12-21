@@ -1,59 +1,58 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
 import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtUtil;
-import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth") // This must match the SecurityConfig
+@CrossOrigin(origins = "*") // Allows the portal to access this controller
 public class AuthController {
 
-    private final UserService userService;
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-    public AuthController(UserService userService, 
-                          AuthenticationManager authenticationManager, 
-                          JwtUtil jwtUtil, 
-                          UserDetailsService userDetailsService) {
-        this.userService = userService;
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
-    }
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody AuthRequest request) {
-        // Updated to use "ROLE_USER" to follow Spring Security standards
-        User user = new User(request.getName(), request.getEmail(), request.getPassword(), "ROLE_USER");
-        return ResponseEntity.ok(userService.registerUser(user));
+    public ResponseEntity<?> register(@RequestBody User user) {
+        // Hash the password before saving for security
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        return ResponseEntity.ok("User registered successfully");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-        // 1. Authenticate the user
+    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
+        String username = loginRequest.get("username");
+        String password = loginRequest.get("password");
+
+        // Authenticate the user
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(username, password)
         );
 
-        // 2. Load user and user details
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-        User user = userService.findByEmail(request.getEmail());
-
-        // 3. Generate the token
-        final String token = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getRole());
-
-        // 4. Return the DTO response - NOW FIXING THE 4-ARGUMENT CONSTRUCTOR ERROR
-        // Arguments: token, id, email, role
-        return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getEmail(), user.getRole()));
+        // Generate the JWT Token
+        String token = jwtUtil.generateToken(username);
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        return ResponseEntity.ok(response);
     }
 }
