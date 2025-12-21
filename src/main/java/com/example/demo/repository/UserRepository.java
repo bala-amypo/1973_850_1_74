@@ -5,6 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    // Add this line to fix the "cannot find symbol: findByUsername" error
+    
+    // Fixes "cannot find symbol: findByUsername"
     Optional<User> findByUsername(String username);
+
+    // Fixes "cannot find symbol: findByEmail"
+    Optional<User> findByEmail(String email);
+
+    // Fixes "cannot find symbol: existsByEmail"
+    boolean existsByEmail(String email);
 }
