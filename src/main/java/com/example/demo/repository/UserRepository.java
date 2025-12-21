@@ -15,3 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Fixes "cannot find symbol: existsByEmail"
     boolean existsByEmail(String email);
 }
+
+
+kill -9 $(lsof -t -i:9001)
