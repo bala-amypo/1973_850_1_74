@@ -1,61 +1,26 @@
 package com.example.demo.dto;
 
+import java.time.LocalDate;
+
 public class PolicyDto {
-    private String policyNumber;
-    private String policyType;
-    private Double coverageAmount;
-    private Double premium;
-    private String startDate; // Received as String from JSON
-    private String endDate;   // Received as String from JSON
+    private Long id; // [cite: 138]
+    private Long userId; // [cite: 139]
+    private String policyNumber; // [cite: 140]
+    private String policyType; // [cite: 141]
+    private LocalDate startDate; // [cite: 142]
+    private LocalDate endDate; // [cite: 143]
 
-    public PolicyDto() {}
-
-    // Required getter to fix compilation error
-    public String getPolicyNumber() {
-        return policyNumber;
-    }
-
-    public void setPolicyNumber(String policyNumber) {
-        this.policyNumber = policyNumber;
-    }
-
-    public String getPolicyType() {
-        return policyType;
-    }
-
-    public void setPolicyType(String policyType) {
-        this.policyType = policyType;
-    }
-
-    public Double getCoverageAmount() {
-        return coverageAmount;
-    }
-
-    public void setCoverageAmount(Double coverageAmount) {
-        this.coverageAmount = coverageAmount;
-    }
-
-    public Double getPremium() {
-        return premium;
-    }
-
-    public void setPremium(Double premium) {
-        this.premium = premium;
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
+    public String getPolicyNumber() { return policyNumber; }
+    public void setPolicyNumber(String policyNumber) { this.policyNumber = policyNumber; }
+    public String getPolicyType() { return policyType; }
+    public void setPolicyType(String policyType) { this.policyType = policyType; }
+    public LocalDate getStartDate() { return startDate; }
+    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
+    public LocalDate getEndDate() { return endDate; }
+    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
 }
