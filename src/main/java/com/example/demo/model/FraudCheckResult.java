@@ -4,31 +4,26 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "fraud_check_results") // Required table name
+@Table(name = "fraud_check_results")
 public class FraudCheckResult {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Primary key
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id; // [cite: 108]
 
-    // One-to-one with Claim: The claim that was evaluated
     @OneToOne
     @JoinColumn(name = "claim_id")
-    private Claim claim;
+    private Claim claim; // 
 
-    private Boolean isFraudulent; // Whether claim is considered fraudulent
+    private Boolean isFraudulent; // [cite: 110]
+    private String triggeredRuleName; // [cite: 111]
+    private String rejectionReason; // [cite: 112]
+    private LocalDateTime checkedAt; // [cite: 113]
 
-    private String triggeredRuleName; // Name of main rule that caused the flag
+    // No-arg constructor [cite: 115]
+    public FraudCheckResult() {}
 
-    private String rejectionReason; // Human-readable explanation
-
-    private LocalDateTime checkedAt; // Timestamp of evaluation
-
-    // No-arg constructor
-    public FraudCheckResult() {
-    }
-
-    // Parameterized constructor
+    // Parameterized constructor [cite: 116]
     public FraudCheckResult(Claim claim, Boolean isFraudulent, String triggeredRuleName, 
                             String rejectionReason, LocalDateTime checkedAt) {
         this.claim = claim;
@@ -38,60 +33,23 @@ public class FraudCheckResult {
         this.checkedAt = checkedAt;
     }
 
-    // Entity Lifecycle Rule: checkedAt must be set automatically
+    // Automatically set checkedAt before saving to database 
     @PrePersist
     protected void onCreate() {
-        if (this.checkedAt == null) {
-            this.checkedAt = LocalDateTime.now();
-        }
+        this.checkedAt = LocalDateTime.now();
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Claim getClaim() {
-        return claim;
-    }
-
-    public void setClaim(Claim claim) {
-        this.claim = claim;
-    }
-
-    public Boolean getIsFraudulent() {
-        return isFraudulent;
-    }
-
-    public void setIsFraudulent(Boolean isFraudulent) {
-        this.isFraudulent = isFraudulent;
-    }
-
-    public String getTriggeredRuleName() {
-        return triggeredRuleName;
-    }
-
-    public void setTriggeredRuleName(String triggeredRuleName) {
-        this.triggeredRuleName = triggeredRuleName;
-    }
-
-    public String getRejectionReason() {
-        return rejectionReason;
-    }
-
-    public void setRejectionReason(String rejectionReason) {
-        this.rejectionReason = rejectionReason;
-    }
-
-    public LocalDateTime getCheckedAt() {
-        return checkedAt;
-    }
-
-    public void setCheckedAt(LocalDateTime checkedAt) {
-        this.checkedAt = checkedAt;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Claim getClaim() { return claim; }
+    public void setClaim(Claim claim) { this.claim = claim; }
+    public Boolean getIsFraudulent() { return isFraudulent; }
+    public void setIsFraudulent(Boolean fraudulent) { isFraudulent = fraudulent; }
+    public String getTriggeredRuleName() { return triggeredRuleName; }
+    public void setTriggeredRuleName(String triggeredRuleName) { this.triggeredRuleName = triggeredRuleName; }
+    public String getRejectionReason() { return rejectionReason; }
+    public void setRejectionReason(String rejectionReason) { this.rejectionReason = rejectionReason; }
+    public LocalDateTime getCheckedAt() { return checkedAt; }
+    public void setCheckedAt(LocalDateTime checkedAt) { this.checkedAt = checkedAt; }
 }
