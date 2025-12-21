@@ -4,7 +4,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
-    // ⭐ Skip JWT check for register, login, and Swagger
+    // Skip JWT check for register, login, Swagger
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
@@ -60,8 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 userDetails.getAuthorities()
                         );
 
-                SecurityContextHolder.getContext()
-                                     .setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
 
