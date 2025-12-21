@@ -14,7 +14,7 @@ public class PolicyServiceImpl implements PolicyService {
     private final PolicyRepository policyRepository;
     private final UserRepository userRepository;
 
-    public PolicyServiceImpl(PolicyRepository policyRepository, UserRepository userRepository) {
+    public PolicyServiceImpl(PolicyRepository policyRepository, UserRepository userRepository) { // [cite: 238, 424]
         this.policyRepository = policyRepository;
         this.userRepository = userRepository;
     }
@@ -22,14 +22,14 @@ public class PolicyServiceImpl implements PolicyService {
     @Override
     public Policy createPolicy(Long userId, Policy policy) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found")); // [cite: 61, 240]
 
         if (policyRepository.existsByPolicyNumber(policy.getPolicyNumber())) {
-            throw new IllegalArgumentException("Policy number already exists");
+            throw new IllegalArgumentException("Policy number already exists"); // [cite: 59, 241]
         }
 
         if (policy.getEndDate().isBefore(policy.getStartDate())) {
-            throw new IllegalArgumentException("Invalid dates");
+            throw new IllegalArgumentException("Invalid dates"); // 
         }
 
         policy.setUser(user);
@@ -38,12 +38,12 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Override
     public List<Policy> getPoliciesByUser(Long userId) {
-        return policyRepository.findByUserId(userId);
+        return policyRepository.findByUserId(userId); // [cite: 181, 243]
     }
 
     @Override
     public Policy getPolicy(Long id) {
         return policyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Policy not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Policy not found")); // [cite: 199, 201]
     }
 }
