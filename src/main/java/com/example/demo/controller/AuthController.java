@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth") // This must match the SecurityConfig
-@CrossOrigin(origins = "*") // Allows the portal to access this controller
+@RequestMapping("/api/auth") // Matches the permitAll path in SecurityConfig
+@CrossOrigin(origins = "*") // Prevents "Blocked" errors from the browser
 public class AuthController {
 
     @Autowired
@@ -32,8 +32,12 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
-        // Hash the password before saving for security
+        // Encode password before saving to MySQL
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // Ensure a default role if none is provided
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("ROLE_USER");
+        }
         userRepository.save(user);
         return ResponseEntity.ok("User registered successfully");
     }
@@ -43,16 +47,21 @@ public class AuthController {
         String username = loginRequest.get("username");
         String password = loginRequest.get("password");
 
-        // Authenticate the user
+        // 1. Authenticate user credentials
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password)
         );
 
-        // Generate the JWT Token
-        String token = jwtUtil.generateToken(username);
+        // 2. Fetch the user to get ID and Role for the token
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 3. Pass all 3 required arguments to generateToken
+        String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole());
         
         Map<String, String> response = new HashMap<>();
         response.put("token", token);
+        response.put("username", user.getUsername());
         return ResponseEntity.ok(response);
     }
 }
