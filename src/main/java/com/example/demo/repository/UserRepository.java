@@ -17,4 +17,3 @@ public interface UserRepository extends JpaRepository<User, Long> {
 }
 
 
-kill -9 $(lsof -t -i:9001)
