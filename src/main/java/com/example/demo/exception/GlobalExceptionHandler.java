@@ -25,3 +25,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }
+
+
+
+kill -9 $(lsof -t -i:9001)
