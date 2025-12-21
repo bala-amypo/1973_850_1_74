@@ -1,64 +1,50 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dto.PolicyDto;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Policy;
 import com.example.demo.model.User;
 import com.example.demo.repository.PolicyRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.PolicyService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
 public class PolicyServiceImpl implements PolicyService {
+    private final PolicyRepository policyRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PolicyRepository policyRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    public PolicyServiceImpl(PolicyRepository policyRepository, UserRepository userRepository) {
+        this.policyRepository = policyRepository;
+        this.userRepository = userRepository;
+    }
 
     @Override
-    public Policy createPolicy(Long userId, PolicyDto dto) {
+    public Policy createPolicy(Long userId, Policy policy) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found")); [cite: 61, 240]
 
-        if (policyRepository.existsByPolicyNumber(dto.getPolicyNumber())) {
-            throw new IllegalArgumentException("policy number already exists");
+        if (policyRepository.existsByPolicyNumber(policy.getPolicyNumber())) {
+            throw new IllegalArgumentException("Policy number already exists"); [cite: 59, 241]
         }
 
-        Policy policy = new Policy();
+        // Fix: Use isBefore or isAfter for LocalDate comparison
+        if (policy.getEndDate().isBefore(policy.getStartDate()) || policy.getEndDate().isEqual(policy.getStartDate())) {
+            throw new IllegalArgumentException("Invalid dates: end date must be after start date"); [cite: 60, 242]
+        }
+
         policy.setUser(user);
-        policy.setPolicyNumber(dto.getPolicyNumber());
-        policy.setPolicyType(dto.getPolicyType());
-        policy.setStartDate(LocalDate.parse(dto.getStartDate()));
-        policy.setEndDate(LocalDate.parse(dto.getEndDate()));
-
-        if (!policy.getEndDate().isAfter(policy.getStartDate())) {
-            throw new IllegalArgumentException("invalid dates");
-        }
-
         return policyRepository.save(policy);
     }
 
     @Override
-    public List<Policy> getAllPolicies() {
-        return policyRepository.findAll();
+    public List<Policy> getPoliciesByUser(Long userId) {
+        return policyRepository.findByUserId(userId); [cite: 243]
     }
 
     @Override
-    public Policy getPolicyById(Long id) {
+    public Policy getPolicy(Long id) {
         return policyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Policy not found"));
-    }
-
-    // FIX: Full implementation of the method requested by Controller
-    @Override
-    public List<Policy> getPoliciesByUserId(Long userId) {
-        return policyRepository.findByUserId(userId);
+                .orElseThrow(() -> new ResourceNotFoundException("Policy not found")); [cite: 201]
     }
 }
