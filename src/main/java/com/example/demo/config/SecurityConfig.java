@@ -1,3 +1,6 @@
+
+
+
 package com.example.demo.config;
 
 import org.springframework.context.annotation.Bean;
@@ -20,7 +23,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Encrypts passwords before saving to MySQL
+        // Used to hash passwords before saving them in the users table
         return new BCryptPasswordEncoder();
     }
 
@@ -32,16 +35,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // 1. DISABLE CSRF: This fixes the 403 error in your screenshot
+            // 1. STOPS THE 403 ERROR: Disables CSRF for REST APIs
             .csrf(csrf -> csrf.disable())
             
-            // 2. ENABLE CORS: Allows the Amypo browser tab to access the API
+            // 2. ALLOWS THE BROWSER: Configures CORS for the Amypo portal
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             
-            // 3. STATELESS: Required for JWT-based security
+            // 3. JWT SECURITY: Ensures the session is stateless
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             
-            // 4. PERMISSIONS: Open Auth and Swagger, protect everything else
+            // 4. PERMISSIONS: Open Auth and Swagger, protect Policy/Claims
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/api/auth/**", 
@@ -50,6 +53,7 @@ public class SecurityConfig {
                     "/swagger-ui.html",
                     "/webjars/**"
                 ).permitAll()
+                // All other insurance endpoints require the "Bearer" token
                 .anyRequest().authenticated()
             );
 
@@ -58,8 +62,8 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        // Allows your browser to talk to the backend without "CORS Blocked" errors
         CorsConfiguration configuration = new CorsConfiguration();
-        // Allows all origins and headers for the cloud IDE environment
         configuration.setAllowedOriginPatterns(Arrays.asList("*")); 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
