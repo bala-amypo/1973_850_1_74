@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.FraudCheckResultDto;
 import com.example.demo.model.FraudCheckResult;
 import com.example.demo.service.FraudDetectionService;
 import org.springframework.http.ResponseEntity;
@@ -9,32 +8,22 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/fraud-check")
 public class FraudDetectionController {
+
     private final FraudDetectionService fraudDetectionService;
 
+    // Constructor injection for compliance
     public FraudDetectionController(FraudDetectionService fraudDetectionService) {
         this.fraudDetectionService = fraudDetectionService;
     }
 
     @PostMapping("/evaluate/{claimId}")
-    public ResponseEntity<FraudCheckResultDto> evaluate(@PathVariable Long claimId) {
-        FraudCheckResult result = fraudDetectionService.evaluateClaim(claimId);
-        return ResponseEntity.ok(convertToDto(result));
+    public ResponseEntity<FraudCheckResult> evaluateClaim(@PathVariable Long claimId) {
+        // This triggers the logic that loops through FraudRules
+        return ResponseEntity.ok(fraudDetectionService.evaluateClaim(claimId));
     }
 
-    @GetMapping("/result/claim/{claimId}")
-    public ResponseEntity<FraudCheckResultDto> getResult(@PathVariable Long claimId) {
-        FraudCheckResult result = fraudDetectionService.getResultByClaim(claimId);
-        return ResponseEntity.ok(convertToDto(result));
-    }
-
-    // Helper method to convert Model to DTO
-    private FraudCheckResultDto convertToDto(FraudCheckResult result) {
-        FraudCheckResultDto dto = new FraudCheckResultDto();
-        dto.setClaimId(result.getClaim().getId());
-        dto.setIsFraudulent(result.getIsFraudulent());
-        dto.setTriggeredRuleName(result.getTriggeredRuleName());
-        dto.setRejectionReason(result.getRejectionReason());
-        dto.setCheckedAt(result.getCheckedAt());
-        return dto;
+    @GetMapping("/result/{claimId}")
+    public ResponseEntity<FraudCheckResult> getResult(@PathVariable Long claimId) {
+        return ResponseEntity.ok(fraudDetectionService.getResultByClaim(claimId));
     }
 }
