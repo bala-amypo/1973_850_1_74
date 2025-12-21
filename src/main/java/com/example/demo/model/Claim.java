@@ -10,16 +10,16 @@ public class Claim {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; [cite: 66, 454]
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "policy_id")
-    private Policy policy; [cite: 67, 454]
+    private Policy policy;
 
-    private LocalDate claimDate; [cite: 68, 454]
-    private Double claimAmount; [cite: 69, 454]
-    private String description; [cite: 70, 454]
-    private String status; // PENDING, APPROVED, or REJECTED [cite: 71, 454]
+    private LocalDate claimDate;
+    private Double claimAmount;
+    private String description;
+    private String status; // PENDING, APPROVED, or REJECTED
 
     @ManyToMany
     @JoinTable(
@@ -27,21 +27,21 @@ public class Claim {
         joinColumns = @JoinColumn(name = "claim_id"),
         inverseJoinColumns = @JoinColumn(name = "rule_id")
     )
-    private Set<FraudRule> suspectedRules; [cite: 77, 98]
+    private Set<FraudRule> suspectedRules;
 
     @OneToOne(mappedBy = "claim", cascade = CascadeType.ALL)
-    private FraudCheckResult fraudCheckResult; [cite: 78, 109]
+    private FraudCheckResult fraudCheckResult;
 
     // No-arg constructor
-    public Claim() {} [cite: 73]
+    public Claim() {}
 
-    // Parameterized constructor - Signature required by test cases
+    // Parameterized constructor [cite: 74]
     public Claim(Policy policy, LocalDate claimDate, Double claimAmount, String description) {
         this.policy = policy;
         this.claimDate = claimDate;
         this.claimAmount = claimAmount;
         this.description = description;
-    } [cite: 74]
+    }
 
     // Getters and Setters
     public Long getId() { return id; }
