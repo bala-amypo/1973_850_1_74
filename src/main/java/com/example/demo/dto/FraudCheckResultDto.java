@@ -3,17 +3,17 @@ package com.example.demo.dto;
 import java.time.LocalDateTime;
 
 public class FraudCheckResultDto {
-    private Long claimId; // [cite: 342]
-    private Boolean isFraudulent; // [cite: 343]
-    private String triggeredRuleName; // [cite: 344]
-    private String rejectionReason; // [cite: 345]
-    private LocalDateTime checkedAt; // [cite: 346]
+    private Long claimId; // [cite: 165]
+    private Boolean isFraudulent; // [cite: 166]
+    private String triggeredRuleName; // [cite: 167]
+    private String rejectionReason; // [cite: 168]
+    private LocalDateTime checkedAt; // [cite: 169]
 
     // Getters and Setters
     public Long getClaimId() { return claimId; }
     public void setClaimId(Long claimId) { this.claimId = claimId; }
     public Boolean getIsFraudulent() { return isFraudulent; }
-    public void setIsFraudulent(Boolean isFraudulent) { this.isFraudulent = isFraudulent; }
+    public void setIsFraudulent(Boolean fraudulent) { isFraudulent = fraudulent; }
     public String getTriggeredRuleName() { return triggeredRuleName; }
     public void setTriggeredRuleName(String triggeredRuleName) { this.triggeredRuleName = triggeredRuleName; }
     public String getRejectionReason() { return rejectionReason; }
