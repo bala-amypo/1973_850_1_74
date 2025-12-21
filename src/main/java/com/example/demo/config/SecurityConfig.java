@@ -20,7 +20,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Standard bean for password hashing
+        // Required for BCrypt hashing
         return new BCryptPasswordEncoder();
     }
 
@@ -35,17 +35,24 @@ public class SecurityConfig {
             // 1. Disable CSRF for REST APIs
             .csrf(csrf -> csrf.disable())
             
-            // 2. Enable CORS to stop the "Blocked" browser errors
+            // 2. Enable CORS to stop "Blocked" browser errors
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             
-            // 3. Set Session to Stateless (Standard for JWT)
+            // 3. Set Session to Stateless for JWT
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             
             // 4. Configure URL permissions
             .authorizeHttpRequests(auth -> auth
-                // Allow these without a token
-                .requestMatchers("/api/auth/**", "/status", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                // Everything else requires login
+                // These paths are allowed without a token
+                .requestMatchers(
+                    "/api/auth/**", 
+                    "/status", 
+                    "/swagger-ui/**", 
+                    "/v3/api-docs/**", 
+                    "/swagger-ui.html",
+                    "/webjars/**"
+                ).permitAll()
+                // All other requests need a JWT token
                 .anyRequest().authenticated()
             );
 
@@ -55,10 +62,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Allows the Amypo portal to talk to your API
-        configuration.setAllowedOrigins(Arrays.asList("*")); 
+        // Allows the cloud proxy to talk to your app
+        configuration.setAllowedOriginPatterns(Arrays.asList("*")); 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+        configuration.setAllowCredentials(true);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
