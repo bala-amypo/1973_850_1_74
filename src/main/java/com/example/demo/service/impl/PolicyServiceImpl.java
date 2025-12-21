@@ -22,15 +22,14 @@ public class PolicyServiceImpl implements PolicyService {
     @Override
     public Policy createPolicy(Long userId, Policy policy) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found")); [cite: 61, 240]
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (policyRepository.existsByPolicyNumber(policy.getPolicyNumber())) {
-            throw new IllegalArgumentException("Policy number already exists"); [cite: 59, 241]
+            throw new IllegalArgumentException("Policy number already exists");
         }
 
-        // Fix: Use isBefore or isAfter for LocalDate comparison
-        if (policy.getEndDate().isBefore(policy.getStartDate()) || policy.getEndDate().isEqual(policy.getStartDate())) {
-            throw new IllegalArgumentException("Invalid dates: end date must be after start date"); [cite: 60, 242]
+        if (policy.getEndDate().isBefore(policy.getStartDate())) {
+            throw new IllegalArgumentException("Invalid dates");
         }
 
         policy.setUser(user);
@@ -39,12 +38,12 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Override
     public List<Policy> getPoliciesByUser(Long userId) {
-        return policyRepository.findByUserId(userId); [cite: 243]
+        return policyRepository.findByUserId(userId);
     }
 
     @Override
     public Policy getPolicy(Long id) {
         return policyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Policy not found")); [cite: 201]
+                .orElseThrow(() -> new ResourceNotFoundException("Policy not found"));
     }
 }

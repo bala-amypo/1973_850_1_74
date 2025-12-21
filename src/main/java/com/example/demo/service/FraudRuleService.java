@@ -1,9 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.model.FraudRule;
-import com.example.demo.dto.FraudRuleDto;
+import java.util.List;
 
 public interface FraudRuleService {
-    // This fixes the "cannot find symbol" error for createRule
-    FraudRule createRule(FraudRuleDto ruleDto);
+    FraudRule addRule(FraudRule rule);
+    List<FraudRule> getAllRules();
 }
