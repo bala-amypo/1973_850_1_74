@@ -20,7 +20,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Required for BCrypt password hashing
+        // Encrypts passwords before saving to MySQL
         return new BCryptPasswordEncoder();
     }
 
@@ -32,18 +32,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // 1. Disable CSRF to allow POST requests like /register and /login
+            // 1. DISABLE CSRF: This fixes the 403 error in your screenshot
             .csrf(csrf -> csrf.disable())
             
-            // 2. Enable CORS so the browser doesn't block the Amypo portal
+            // 2. ENABLE CORS: Allows the Amypo browser tab to access the API
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             
-            // 3. Use Stateless sessions (required for JWT)
+            // 3. STATELESS: Required for JWT-based security
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             
-            // 4. Set endpoint permissions
+            // 4. PERMISSIONS: Open Auth and Swagger, protect everything else
             .authorizeHttpRequests(auth -> auth
-                // Publicly allow authentication and Swagger documentation
                 .requestMatchers(
                     "/api/auth/**", 
                     "/swagger-ui/**", 
@@ -51,7 +50,6 @@ public class SecurityConfig {
                     "/swagger-ui.html",
                     "/webjars/**"
                 ).permitAll()
-                // All other insurance modules require a JWT token
                 .anyRequest().authenticated()
             );
 
@@ -60,8 +58,8 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        // Configures how your app talks to the Amypo cloud proxy
         CorsConfiguration configuration = new CorsConfiguration();
+        // Allows all origins and headers for the cloud IDE environment
         configuration.setAllowedOriginPatterns(Arrays.asList("*")); 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
