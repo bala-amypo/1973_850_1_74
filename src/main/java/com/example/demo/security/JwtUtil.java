@@ -12,13 +12,11 @@ public class JwtUtil {
     private final String secret;
     private final long expiration;
 
-    // ⚠️ constructor MUST match test
     public JwtUtil(String secret, long expiration) {
         this.secret = secret;
         this.expiration = expiration;
     }
 
-    // Generate JWT token with userId, email, role
     public String generateToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getEmail())
@@ -30,25 +28,22 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Validate token (true if valid, false otherwise)
     public boolean validateToken(String token) {
         try {
             Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token);
+                    .setSigningKey(secret)
+                    .parseClaimsJws(token);
             return true;
-        } catch (Exception ex) {
+        } catch (Exception e) {
             return false;
         }
     }
 
-    // Extract email from token
     public String getEmailFromToken(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(secret)
                 .parseClaimsJws(token)
                 .getBody();
-
         return claims.getSubject();
     }
 }
