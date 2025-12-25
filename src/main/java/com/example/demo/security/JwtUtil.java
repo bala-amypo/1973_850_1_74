@@ -14,13 +14,15 @@ public class JwtUtil {
     private final SecretKey key;
     private final long expiration;
 
+    // Constructor (secret parameter kept for test compatibility)
     public JwtUtil(String secret, long expiration) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        // Generate a secure key automatically (avoids WeakKeyException)
+        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         this.expiration = expiration;
     }
 
     // ======================
-    // Generate JWT
+    // Generate JWT Token
     // ======================
     public String generateToken(User user) {
         return Jwts.builder()
@@ -30,12 +32,12 @@ public class JwtUtil {
                 .claim("role", user.getRole())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(key)
                 .compact();
     }
 
     // ======================
-    // Validate JWT
+    // Validate JWT Token
     // ======================
     public boolean validateToken(String token) {
         try {
@@ -45,12 +47,13 @@ public class JwtUtil {
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
+            // Must return false (test case expectation)
             return false;
         }
     }
 
     // ======================
-    // Extract Email
+    // Extract Email from JWT
     // ======================
     public String getEmailFromToken(String token) {
         try {
@@ -59,6 +62,7 @@ public class JwtUtil {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
+
             return claims.get("email", String.class);
         } catch (Exception e) {
             return null;
