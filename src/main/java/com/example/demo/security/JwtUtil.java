@@ -4,60 +4,61 @@ import com.example.demo.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 public class JwtUtil {
 
-    private final String secret;
+    private final SecretKey key;
     private final long expiration;
 
     public JwtUtil(String secret, long expiration) {
-        this.secret = secret;
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.expiration = expiration;
     }
 
-    // =========================
-    // Generate Token
-    // =========================
+    // ======================
+    // Generate JWT
+    // ======================
     public String generateToken(User user) {
-
         return Jwts.builder()
-                .setSubject(user.getEmail())               // email
-                .claim("userId", user.getId())             // userId
-                .claim("email", user.getEmail())           // explicit email claim
-                .claim("role", user.getRole())             // role
+                .setSubject(user.getEmail())
+                .claim("userId", user.getId())
+                .claim("email", user.getEmail())
+                .claim("role", user.getRole())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // =========================
-    // Validate Token
-    // =========================
+    // ======================
+    // Validate JWT
+    // ======================
     public boolean validateToken(String token) {
         try {
-            Jwts.parser()
-                    .setSigningKey(secret)
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
-            // IMPORTANT: must return false, not throw
             return false;
         }
     }
 
-    // =========================
+    // ======================
     // Extract Email
-    // =========================
+    // ======================
     public String getEmailFromToken(String token) {
         try {
-            Claims claims = Jwts.parser()
-                    .setSigningKey(secret)
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
                     .parseClaimsJws(token)
                     .getBody();
-
             return claims.get("email", String.class);
         } catch (Exception e) {
             return null;
