@@ -11,27 +11,28 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     // Required for UserServiceImpl (PasswordEncoder)
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+            public PasswordEncoder passwordEncoder() {
+                    return new BCryptPasswordEncoder();
+                        }
 
-    // Simple security configuration (portal-safe)
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+                            // Simple security configuration (portal-safe)
+                                @Bean
+                                    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                        "/status",
-                        "/auth/**",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**"
-                ).permitAll()
-                .anyRequest().permitAll()
-            );
+                                            http
+                                                        .csrf(csrf -> csrf.disable())
+                                                                    .authorizeHttpRequests(auth -> auth
+                                                                                    .requestMatchers(
+                                                                                                            "/status",
+                                                                                                                                    "/auth/**",
+                                                                                                                                                            "/swagger-ui/**",
+                                                                                                                                                                                    "/v3/api-docs/**"
+                                                                                                                                                                                                    ).permitAll()
+                                                                                                                                                                                                                    .anyRequest().permitAll()
+                                                                                                                                                                                                                                );
 
-        return http.build();
-    }
-}
+                                                                                                                                                                                                                                        return http.build();
+                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                            
